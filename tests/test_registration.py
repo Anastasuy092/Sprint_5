@@ -5,45 +5,54 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from locators import Locators
+from helpers import generate_random_email
+from urls import Urls
 
-def test_successful_registration(driver):  # Тест успешной регистрации
-    driver.get(Locators.HOME_PAGE_URL)  # Используем URL главной страницы из локаторов
+@pytest.mark.usefixtures("driver")  # Подключаем фикстуру driver
+class TestRegistration:
 
-    driver.find_element(*Locators.LOGIN_BUTTON).click()  # Кнопка "Войти в аккаунт"
-    driver.find_element(By.XPATH, "//a[text()='Зарегистрироваться']").click()  # Нажимаем "Зарегистрироваться"
+    def test_successful_registration(self, driver):  # Тест успешной регистрации
+        driver.get(Urls.HOME_PAGE)  # Используем URL главной страницы из локаторов
 
-    # Заполняем поля
-    driver.find_element(By.NAME, "name").send_keys("Анастасия")
-    driver.find_element(*Locators.EMAIL_INPUT).send_keys("Anastasuy_Bazq99we_19_123@yandex.ru")
-    driver.find_element(*Locators.PASSWORD_INPUT).send_keys("123456")
+        driver.find_element(*Locators.LOGIN_BUTTON).click()  # Кнопка "Войти в аккаунт"
+        driver.find_element(*Locators.REGISTER_LINK).click()  # Нажимаем "Зарегистрироваться"
 
-    # Нажимаем кнопка "Зарегистрироваться"
-    driver.find_element(By.XPATH, "//button[text()='Зарегистрироваться']").click()
+        # Генерируем случайный email
+        random_email = generate_random_email()
 
-    # Ожидаем появления кнопки "Войти", чтобы убедиться, что регистрация прошла успешно
-    success_message = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//h2[text()='Вход']")))
-    assert success_message is not None, "Регистрация не удалась!"
+        # Заполняем поля
+        driver.find_element(By.NAME, "name").send_keys("Анастасия")
+        driver.find_element(*Locators.EMAIL_INPUT).send_keys(random_email)  # Используем сгенерированный email
+        driver.find_element(*Locators.PASSWORD_INPUT).send_keys("123456")
 
-    driver.quit()
+        # Нажимаем кнопку "Зарегистрироваться"
+        driver.find_element(*Locators.REGISTER_BUTTON).click()
 
-def test_invalid_password_registration(driver):  # Ошибка для некорректного пароля
-    driver.get(Locators.HOME_PAGE_URL)  # Используем URL главной страницы из локаторов
+        # Ожидаем появления кнопки "Войти", чтобы убедиться, что регистрация прошла успешно
+        success_message = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//h2[text()='Вход']")))
+        assert success_message is not None, "Регистрация не удалась!"
 
-    driver.find_element(*Locators.LOGIN_BUTTON).click()  # Кнопка "Войти в аккаунт"
-    driver.find_element(By.XPATH, "//a[text()='Зарегистрироваться']").click()  # Нажимаем "Зарегистрироваться"
+    def test_invalid_password_registration(self, driver):  # Ошибка для некорректного пароля
+        driver.get(Urls.HOME_PAGE)  # Используем URL главной страницы из локаторов
 
-    # Заполняем поля
-    driver.find_element(By.NAME, "name").send_keys("Анастасия")
-    driver.find_element(*Locators.EMAIL_INPUT).send_keys("Anastasuy_Bazova_19_123@yandex.ru")
-    driver.find_element(*Locators.PASSWORD_INPUT).send_keys("123")  # Некорректный пароль (слишком короткий)
+        driver.find_element(*Locators.LOGIN_BUTTON).click()  # Кнопка "Войти в аккаунт"
+        driver.find_element(*Locators.REGISTER_LINK).click()  # Нажимаем "Зарегистрироваться"
 
-    # Нажимаем кнопку "Зарегистрироваться"
-    driver.find_element(By.XPATH, "//button[text()='Зарегистрироваться']").click()
+        # Генерируем случайный email
+        random_email = generate_random_email()
 
-    # Ожидаем появления ошибки
-    error_message = WebDriverWait(driver, 5).until(EC.visibility_of_element_located((By.CLASS_NAME, "input__error")))
-    assert error_message.text == "Некорректный пароль"
+        # Заполняем поля
+        driver.find_element(By.NAME, "name").send_keys("Анастасия")
+        driver.find_element(*Locators.EMAIL_INPUT).send_keys(random_email)  # Используем сгенерированный email
+        driver.find_element(*Locators.PASSWORD_INPUT).send_keys("123")  # Некорректный пароль (слишком короткий)
 
-    driver.quit()
+        # Нажимаем кнопку "Зарегистрироваться"
+        driver.find_element(*Locators.REGISTER_BUTTON).click()
+
+        # Ожидаем появления ошибки
+        error_message = WebDriverWait(driver, 5).until(EC.visibility_of_element_located((By.CLASS_NAME, "input__error")))
+        assert error_message.text == "Некорректный пароль"
+
+        driver.quit()
 
 

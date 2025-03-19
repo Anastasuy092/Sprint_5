@@ -1,83 +1,73 @@
-import time
 import pytest
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from locators import Locators
-from selenium import webdriver
+from urls import Urls
 
-def test_forgot_password_login(driver): #Тест переход по клику на "Личный кабинет"
-    expected_url = "https://stellarburgers.nomoreparties.site/account/profile"
-    driver.get(Locators.HOME_PAGE_URL) # Используем URL главной страницы из локаторов
 
-    # Нажимаем Войти в аккаунт
-    driver.find_element(*Locators.LOGIN_BUTTON).click()
-    # Заполняем поля
-    driver.find_element(*Locators.EMAIL_INPUT).send_keys('Anastasuy_Bazova_19_123@yandex.ru')
-    driver.find_element(*Locators.PASSWORD_INPUT).send_keys('123456')
+@pytest.mark.usefixtures("driver")  # Подключаем фикстуру driver
+class TestNavigation:
 
-    # Нажимаем кнопку Войти
-    driver.find_element(*Locators.LOGIN_SUBMIT_BUTTON).click()
-    # Нажимаем Личный кабинет
-    driver.find_element(*Locators.PERSONAL_ACCOUNT_LINK).click()
+    def login(self, driver):
+        #Выполняет авторизацию пользователя.
+        driver.get(Urls.HOME_PAGE)
+        driver.find_element(*Locators.LOGIN_BUTTON).click()  # Нажимаем "Войти в аккаунт"
 
-    # Ожидаем, пока URL страницы изменится на ожидаемый
-    WebDriverWait(driver, 20).until(EC.url_to_be(expected_url))
+        # Заполняем поля
+        driver.find_element(*Locators.EMAIL_INPUT).send_keys('Anastasuy_Bazova_19_123@yandex.ru')
+        driver.find_element(*Locators.PASSWORD_INPUT).send_keys('123456')
 
-    # Проверяем, что текущий URL соответствует ожидаемому
-    current_url = driver.current_url
-    assert current_url == expected_url, f"Ожидаемый URL: {expected_url}, Фактический URL: {current_url}"
-    driver.quit()
+        # Нажимаем кнопку "Войти"
+        driver.find_element(*Locators.LOGIN_SUBMIT_BUTTON).click()
 
-def test_login_and_navigate_to_constructor(driver): # Тест переход по клику на Конструктор
-    expected_url = "https://stellarburgers.nomoreparties.site/"
-    driver.get(Locators.HOME_PAGE_URL)
+    def test_forgot_password_login(self, driver):
+        #Тест переход по клику на 'Личный кабинет'.
+        expected_url = "https://stellarburgers.nomoreparties.site/account/profile"
+        self.login(driver)  # Выполняем авторизацию
 
-    # Нажимаем Войти в аккаунтт
-    driver.find_element(*Locators.LOGIN_BUTTON).click()
-    # Заполняем поля
-    driver.find_element(*Locators.EMAIL_INPUT).send_keys('Anastasuy_Bazova_19_123@yandex.ru')
-    driver.find_element(*Locators.PASSWORD_INPUT).send_keys('123456')
+        # Нажимаем "Личный кабинет"
+        driver.find_element(*Locators.PERSONAL_ACCOUNT_LINK).click()
 
-    # Нажимаем кнопку Войти
-    driver.find_element(*Locators.LOGIN_SUBMIT_BUTTON).click()
-    # Нажимаем Личный кабинет
-    driver.find_element(*Locators.PERSONAL_ACCOUNT_LINK).click()
-    # Нажимаем на элемент "Конструктор"
-    WebDriverWait(driver, 5).until(EC.element_to_be_clickable(Locators.CONSTRUCTOR_LINK)).click()
+        # Ожидаем, пока URL страницы изменится на ожидаемый
+        WebDriverWait(driver, 20).until(EC.url_to_be(expected_url))
 
-    # Ожидаем, пока URL страницы изменится на ожидаемый
-    WebDriverWait(driver, 5).until(EC.url_to_be(expected_url))
+        # Проверяем, что текущий URL соответствует ожидаемому
+        current_url = driver.current_url
+        assert current_url == expected_url, f"Ожидаемый URL: {expected_url}, Фактический URL: {current_url}"
 
-    # Проверяем, что текущий URL соответствует ожидаемому
-    current_url = driver.current_url
-    assert current_url == expected_url, f"Ожидаемый URL: {expected_url}, Фактический URL: {current_url}"
-    driver.quit()
+    def test_login_and_navigate_to_constructor(self, driver):
+        #Тест переход по клику на 'Конструктор'.
+        expected_url = "https://stellarburgers.nomoreparties.site/"
+        self.login(driver)  # Выполняем авторизацию
 
-def test_login_and_navigate_to_homepage(driver): # Тест переход по клику на Stellar Burgers
-    expected_url = "https://stellarburgers.nomoreparties.site/"
-    driver.get(Locators.HOME_PAGE_URL)
+        # Нажимаем "Личный кабинет"
+        driver.find_element(*Locators.PERSONAL_ACCOUNT_LINK).click()
 
-    # Нажимаем "Войти в аккаунт"
-    driver.find_element(*Locators.LOGIN_BUTTON).click()
+        # Нажимаем на элемент "Конструктор"
+        WebDriverWait(driver, 5).until(EC.element_to_be_clickable(Locators.CONSTRUCTOR_LINK)).click()
 
-    # Заполняем поля Email и Пароль
-    driver.find_element(*Locators.EMAIL_INPUT).send_keys('Anastasuy_Bazova_19_123@yandex.ru')
-    driver.find_element(*Locators.PASSWORD_INPUT).send_keys('123456')
+        # Ожидаем, пока URL страницы изменится на ожидаемый
+        WebDriverWait(driver, 5).until(EC.url_to_be(expected_url))
 
-    # Нажимаем кнопку "Войти"
-    driver.find_element(*Locators.LOGIN_SUBMIT_BUTTON).click()
+        # Проверяем, что текущий URL соответствует ожидаемому
+        current_url = driver.current_url
+        assert current_url == expected_url, f"Ожидаемый URL: {expected_url}, Фактический URL: {current_url}"
 
-    # Нажимаем "Личный кабинет"
-    driver.find_element(*Locators.PERSONAL_ACCOUNT_LINK).click()
+    def test_login_and_navigate_to_homepage(self, driver):
+        #Тест переход по клику на 'Stellar Burgers'.
+        expected_url = "https://stellarburgers.nomoreparties.site/"
+        self.login(driver)  # Выполняем авторизацию
 
-    # Нажимаем на логотип Stellar Burgers (используем его XPATH)
-    WebDriverWait(driver, 5).until(EC.element_to_be_clickable(Locators.LOGO_LINK)).click()
+        # Нажимаем "Личный кабинет"
+        driver.find_element(*Locators.PERSONAL_ACCOUNT_LINK).click()
 
-    # Ожидаем, пока URL страницы изменится на ожидаемый (главную страницу)
-    WebDriverWait(driver, 5).until(EC.url_to_be(expected_url))
+        # Нажимаем на логотип Stellar Burgers
+        WebDriverWait(driver, 5).until(EC.element_to_be_clickable(Locators.LOGO_LINK)).click()
 
-    # Проверяем, что текущий URL соответствует ожидаемому
-    current_url = driver.current_url
-    assert current_url == expected_url, f"Ожидаемый URL: {expected_url}, Фактический URL: {current_url}"
-    driver.quit()
+        # Ожидаем, пока URL страницы изменится на ожидаемый
+        WebDriverWait(driver, 5).until(EC.url_to_be(expected_url))
+
+        # Проверяем, что текущий URL соответствует ожидаемому
+        current_url = driver.current_url
+        assert current_url == expected_url, f"Ожидаемый URL: {expected_url}, Фактический URL: {current_url}"

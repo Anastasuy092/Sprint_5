@@ -5,9 +5,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from locators import Locators
 from selenium import webdriver
+from urls import Urls
 
 def test_login_from_main_page(driver):  # Тест входа по кнопке "Войти в аккаунтт"
-    driver.get(Locators.HOME_PAGE_URL)  # Используем URL главной страницы из локаторов
+    driver.get(Urls.HOME_PAGE)  # Используем URL главной страницы из локаторов
 
     driver.find_element(*Locators.LOGIN_BUTTON).click()  # Нажимаем "Войти в аккаунт"
 
@@ -26,7 +27,7 @@ def test_login_from_main_page(driver):  # Тест входа по кнопке 
     driver.quit()
 
 def test_login_via_personal_account(driver):  # Тест входа через личный кабинет
-    driver.get(Locators.HOME_PAGE_URL)  # Используем URL главной страницы из локаторов
+    driver.get(Urls.HOME_PAGE)  # Используем URL главной страницы из локаторов
 
     driver.find_element(*Locators.PERSONAL_ACCOUNT_LINK).click()  # Нажимаем Личный кабинет
 
@@ -46,10 +47,10 @@ def test_login_via_personal_account(driver):  # Тест входа через �
 
 
 def test_login_via_registration_form(driver):  # Тест входа через кнопку в форме регистрации
-    driver.get(Locators.HOME_PAGE_URL)  # Используем URL главной страницы из локаторов
+    driver.get(Urls.HOME_PAGE)  # Используем URL главной страницы из локаторов
 
     driver.find_element(*Locators.PERSONAL_ACCOUNT_LINK).click()  # Нажимаем Личный кабинет
-    driver.find_element(*Locators.REGISTER_BUTTON).click()  # Нажимаем Зарегистрироваться
+    driver.find_element(*Locators.REGISTER_LINK).click()  # Нажимаем Зарегистрироваться
     driver.find_element(*Locators.LOGIN_FROM_REGISTRATION).click()  # Нажимаем кнопку Войти
 
     # Заполняем поля
@@ -68,7 +69,7 @@ def test_login_via_registration_form(driver):  # Тест входа через 
 
 
 def test_forgot_password_login(driver):  # Тест входа через кнопку в форме восстановления пароля
-    driver.get(Locators.HOME_PAGE_URL)  # Используем URL главной страницы из локаторов
+    driver.get(Urls.HOME_PAGE)  # Используем URL главной страницы из локаторов
 
     driver.find_element(*Locators.LOGIN_BUTTON).click()  # Нажимаем Войти в аккаунт
     driver.find_element(*Locators.FORGOT_PASSWORD_LINK).click()  # Нажимаем Восстановить пароль
