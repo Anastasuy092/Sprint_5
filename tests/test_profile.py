@@ -1,30 +1,23 @@
+import sys
+import os
+
+# Добавляем корневую папку проекта в sys.path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pytest
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from locators import Locators
-from urls import Urls
+from helpers import generate_random_email, login
 
 
 @pytest.mark.usefixtures("driver")  # Подключаем фикстуру driver
-class TestNavigation:
-
-    def login(self, driver):
-        #Выполняет авторизацию пользователя.
-        driver.get(Urls.HOME_PAGE)
-        driver.find_element(*Locators.LOGIN_BUTTON).click()  # Нажимаем "Войти в аккаунт"
-
-        # Заполняем поля
-        driver.find_element(*Locators.EMAIL_INPUT).send_keys('Anastasuy_Bazova_19_123@yandex.ru')
-        driver.find_element(*Locators.PASSWORD_INPUT).send_keys('123456')
-
-        # Нажимаем кнопку "Войти"
-        driver.find_element(*Locators.LOGIN_SUBMIT_BUTTON).click()
+class TestNavigationForgotPasswordLogin:
 
     def test_forgot_password_login(self, driver):
         #Тест переход по клику на 'Личный кабинет'.
         expected_url = "https://stellarburgers.nomoreparties.site/account/profile"
-        self.login(driver)  # Выполняем авторизацию
+        login(driver)  # Выполняем авторизацию
 
         # Нажимаем "Личный кабинет"
         driver.find_element(*Locators.PERSONAL_ACCOUNT_LINK).click()
@@ -36,10 +29,13 @@ class TestNavigation:
         current_url = driver.current_url
         assert current_url == expected_url, f"Ожидаемый URL: {expected_url}, Фактический URL: {current_url}"
 
+@pytest.mark.usefixtures("driver")  # Подключаем фикстуру driver
+class TestLoginAndNavigateToConstructor:
+
     def test_login_and_navigate_to_constructor(self, driver):
         #Тест переход по клику на 'Конструктор'.
         expected_url = "https://stellarburgers.nomoreparties.site/"
-        self.login(driver)  # Выполняем авторизацию
+        login(driver)  # Выполняем авторизацию
 
         # Нажимаем "Личный кабинет"
         driver.find_element(*Locators.PERSONAL_ACCOUNT_LINK).click()
@@ -54,10 +50,13 @@ class TestNavigation:
         current_url = driver.current_url
         assert current_url == expected_url, f"Ожидаемый URL: {expected_url}, Фактический URL: {current_url}"
 
+@pytest.mark.usefixtures("driver")  # Подключаем фикстуру driver
+class TestLoginAndNavigateToHomepage:
+
     def test_login_and_navigate_to_homepage(self, driver):
         #Тест переход по клику на 'Stellar Burgers'.
         expected_url = "https://stellarburgers.nomoreparties.site/"
-        self.login(driver)  # Выполняем авторизацию
+        login(driver)  # Выполняем авторизацию
 
         # Нажимаем "Личный кабинет"
         driver.find_element(*Locators.PERSONAL_ACCOUNT_LINK).click()

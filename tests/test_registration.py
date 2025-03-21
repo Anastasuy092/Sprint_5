@@ -1,3 +1,8 @@
+import sys
+import os
+
+# Добавляем корневую папку проекта в sys.path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import time
 import pytest
 from selenium import webdriver
@@ -5,11 +10,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from locators import Locators
-from helpers import generate_random_email
 from urls import Urls
+from helpers import generate_random_email, login
 
 @pytest.mark.usefixtures("driver")  # Подключаем фикстуру driver
-class TestRegistration:
+class TestSuccessfulRegistration:
 
     def test_successful_registration(self, driver):  # Тест успешной регистрации
         driver.get(Urls.HOME_PAGE)  # Используем URL главной страницы из локаторов
@@ -29,8 +34,11 @@ class TestRegistration:
         driver.find_element(*Locators.REGISTER_BUTTON).click()
 
         # Ожидаем появления кнопки "Войти", чтобы убедиться, что регистрация прошла успешно
-        success_message = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//h2[text()='Вход']")))
+        success_message = WebDriverWait(driver, 10).until(EC.presence_of_element_located(Locators.LOGIN_SUBMIT_BUTTON))
         assert success_message is not None, "Регистрация не удалась!"
+
+@pytest.mark.usefixtures("driver")
+class TestInvalidPasswordRegistration:
 
     def test_invalid_password_registration(self, driver):  # Ошибка для некорректного пароля
         driver.get(Urls.HOME_PAGE)  # Используем URL главной страницы из локаторов
@@ -50,9 +58,7 @@ class TestRegistration:
         driver.find_element(*Locators.REGISTER_BUTTON).click()
 
         # Ожидаем появления ошибки
-        error_message = WebDriverWait(driver, 5).until(EC.visibility_of_element_located((By.CLASS_NAME, "input__error")))
+        error_message = WebDriverWait(driver, 5).until(EC.visibility_of_element_located(Locators.ERROR_MESSAGE))
         assert error_message.text == "Некорректный пароль"
-
-        driver.quit()
 
 
