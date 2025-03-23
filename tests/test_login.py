@@ -14,11 +14,10 @@ from urls import Urls
 from helpers import generate_random_email, login
 
 @pytest.mark.usefixtures("driver")
-class TestLoginFromMainPage:
+class TestLogin:
 
     def test_login_from_main_page(self, driver):  # Тест входа по кнопке "Войти в аккаунтт"
         driver.get(Urls.HOME_PAGE)  # Используем URL главной страницы из локаторов
-
         driver.find_element(*Locators.LOGIN_BUTTON).click()  # Нажимаем "Войти в аккаунт"
 
     # Заполняем поля
@@ -33,9 +32,6 @@ class TestLoginFromMainPage:
 
     # Проверяем, что элемент "Личный Кабинет" отображается на странице
         assert personal_account.is_displayed(), "Не удалось войти в аккаунт"
-
-@pytest.mark.usefixtures("driver")
-class TestLoginViaPersonalAccount:
 
     def test_login_via_personal_account(self, driver):  # Тест входа через личный кабинет
         driver.get(Urls.HOME_PAGE)  # Используем URL главной страницы из локаторов
@@ -54,9 +50,6 @@ class TestLoginViaPersonalAccount:
 
     # Проверяем, что элемент "Личный Кабинет" отображается на странице
         assert personal_account.is_displayed(), "Не удалось войти в аккаунт"
-
-@pytest.mark.usefixtures("driver")
-class TestLoginViaRegistrationForm:
 
     def test_login_via_registration_form(self,driver):  # Тест входа через кнопку в форме регистрации
         driver.get(Urls.HOME_PAGE)  # Используем URL главной страницы из локаторов
@@ -77,9 +70,6 @@ class TestLoginViaRegistrationForm:
 
     # Проверяем, что элемент "Личный Кабинет" отображается на странице
         assert personal_account.is_displayed(), "Не удалось войти в аккаунт"
-
-@pytest.mark.usefixtures("driver")
-class TestForgotPasswordLogin:
 
     def test_forgot_password_login(self,driver):  # Тест входа через кнопку в форме восстановления пароля
         driver.get(Urls.HOME_PAGE)  # Используем URL главной страницы из локаторов
